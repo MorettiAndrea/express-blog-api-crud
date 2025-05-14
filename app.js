@@ -5,6 +5,8 @@ const port = 3000;
 const localHost = `http://localhost:${port}`;
 
 // import
+let posts = require("./data/posts");
+console.log(posts);
 
 // console check
 app.listen(port, () => {
