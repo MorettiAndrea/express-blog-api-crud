@@ -9,7 +9,7 @@ const router = require("./routers/postsRoutes");
 
 // middleware
 app.use(express.static("img"));
-app.use("/", router);
+app.use("/posts", router);
 
 // console check
 app.listen(port, () => {

@@ -30,26 +30,38 @@ const show = (req, res) => {
   const postId = parseInt(req.params.id);
   const post = posts.find((post) => post.id === postId);
   if (!post) {
-    res.status(404);
+    res.json({
+      status: 404,
+      message: "post not found",
+      error: "404 not found",
+    });
   }
-  res.json({ message: "pizza not found", error: "404 not found" });
-  return;
+  return res.json(post);
 };
 
 const store = (req, res) => {
-  res.json("da fare");
+  res.json("crea un nuovo elemento");
 };
 
 const update = (req, res) => {
-  res.json("da fare");
+  res.json("modifica totalmente un nuovo elemento");
 };
 
 const modify = (req, res) => {
-  res.json("da fare");
+  res.json("modifica parzialmente un nuovo elemento");
 };
 
 const destroy = (req, res) => {
-  res.json("da fare");
+  const postId = parseInt(req.params.id);
+  const post = posts.filter((post) => post.id !== postId);
+  if (!post) {
+    res.json({
+      status: 404,
+      message: "post not found",
+      error: "404 not found",
+    });
+  }
+  return res.json({ status: 204, message: "Post cancellato", data: post });
 };
 
 module.exports = { index, show, store, update, modify, destroy };
