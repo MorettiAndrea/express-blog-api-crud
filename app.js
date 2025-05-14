@@ -5,7 +5,11 @@ const port = 3000;
 const localHost = `http://localhost:${port}`;
 
 // import
-let posts = require("./data/posts");
+const router = require("./routers/postsRoutes");
+
+// middleware
+app.use(express.static("img"));
+app.use("/", router);
 
 // console check
 app.listen(port, () => {
