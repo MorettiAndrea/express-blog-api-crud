@@ -1,5 +1,6 @@
 // import
 const posts = require("../data/posts");
+const { post } = require("../routers/postsRoutes");
 
 const index = (req, res) => {
   const filtredTitle = req.query.titolo;
@@ -40,9 +41,18 @@ const show = (req, res) => {
 };
 
 const store = (req, res) => {
-  const newPost = req.body;
-  console.log(newPost);
+  const { titolo, contenuto, immagine, tags } = req.body;
 
+  let lastId = 0;
+
+  for (eachPost of posts) {
+    if (lastId < eachPost.id) {
+      lastId = eachPost.id;
+    }
+  }
+  const newPostId = lastId + 1;
+  const newPost = { id: newPostId, titolo, contenuto, immagine, tags };
+  posts.push(newPost);
   res.json(newPost);
 };
 
