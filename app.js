@@ -8,6 +8,7 @@ const localHost = `http://localhost:${port}`;
 const router = require("./routers/postsRoutes");
 
 // middleware
+app.use(express.json());
 app.use(express.static("img"));
 app.use("/posts", router);
 

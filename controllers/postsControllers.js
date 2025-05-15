@@ -40,7 +40,10 @@ const show = (req, res) => {
 };
 
 const store = (req, res) => {
-  res.json("crea un nuovo elemento");
+  const newPost = req.body;
+  console.log(newPost);
+
+  res.json(newPost);
 };
 
 const update = (req, res) => {
@@ -63,5 +66,6 @@ const destroy = (req, res) => {
   }
   return res.json({ status: 204, message: "Post cancellato", data: post });
 };
+console.log(posts);
 
 module.exports = { index, show, store, update, modify, destroy };
