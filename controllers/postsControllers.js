@@ -162,16 +162,10 @@ const modify = (req, res) => {
   // controllo correttezza dati
 
   const wrongElements = [];
-  if (typeof titolo !== "string" || titolo.length !== null) {
-    wrongElements.push("controlla i dati immessi su titolo");
-  }
-  if (typeof contenuto !== "string" || contenuto.length !== null) {
-    wrongElements.push("controlla i dati immessi su contenuto");
-  }
-  if (typeof immagine !== "string" || immagine.length !== null) {
+  if (typeof immagine !== "string") {
     wrongElements.push("controlla i dati immessi su immagine");
   }
-  if (!Array.isArray(tags) || tags.length !== 0) {
+  if (!Array.isArray(tags)) {
     wrongElements.push("controlla i dati immessi nei tags");
   }
 
@@ -205,7 +199,7 @@ const modify = (req, res) => {
 
   res.status(200).json(newPost);
 
-  res.json(newPost);
+  res.json(Posts);
 };
 
 const destroy = (req, res) => {
