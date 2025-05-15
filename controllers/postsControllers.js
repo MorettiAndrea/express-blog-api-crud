@@ -40,8 +40,11 @@ const show = (req, res) => {
 };
 
 const store = (req, res) => {
+  // acquisizione chiavi
+
   const { titolo, contenuto, immagine, tags } = req.body;
 
+  // trovo l'id più grande
   let lastId = 0;
 
   for (eachPost of posts) {
@@ -50,13 +53,40 @@ const store = (req, res) => {
     }
   }
   const newPostId = lastId + 1;
+
+  // controllo correttezza form
+
+  const wrongElements = [];
+  if (!titolo || typeof titolo !== "string" || titolo.length < 1) {
+    wrongElements.push("controlla i dati immessi su titolo");
+  }
+  if (!contenuto || typeof contenuto !== "string" || contenuto.length < 1) {
+    wrongElements.push("controlla i dati immessi su contenuto");
+  }
+  if (typeof immagine !== "string") {
+    wrongElements.push("controlla i dati immessi su immagine");
+  }
+  if (!Array.isArray(tags)) {
+    wrongElements.push("controlla i dati immessi nei tags");
+  }
+
+  if (wrongElements.length > 0) {
+    res.status(400).json({
+      error: "400 bad request",
+      message: "errore nei dati immessi",
+      wrongElements,
+    });
+    return;
+  }
+
+  // creazione nuovo elemento
   const newPost = { id: newPostId, titolo, contenuto, immagine, tags };
   posts.push(newPost);
   res.status(201).json(newPost);
 };
 
 const update = (req, res) => {
-  // richiesta chiavi
+  // acquisizione chiavi
 
   const { titolo, contenuto, immagine, tags } = req.body;
 
@@ -96,7 +126,9 @@ const update = (req, res) => {
     });
     return;
   }
+
   // logica di eliminazione
+
   const newPost = { id: targetPostId, titolo, contenuto, immagine, tags };
   const postIndex = posts.indexOf(currentPost);
   posts.splice(postIndex, 1, newPost);
