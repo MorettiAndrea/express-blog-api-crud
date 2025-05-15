@@ -1,6 +1,5 @@
 // import
 const posts = require("../data/posts");
-const { post } = require("../routers/postsRoutes");
 
 const index = (req, res) => {
   const filtredTitle = req.query.titolo;
@@ -53,14 +52,60 @@ const store = (req, res) => {
   const newPostId = lastId + 1;
   const newPost = { id: newPostId, titolo, contenuto, immagine, tags };
   posts.push(newPost);
-  res.json(newPost);
+  res.status(201).json(newPost);
 };
 
 const update = (req, res) => {
-  res.json("modifica totalmente un nuovo elemento");
+  // richiesta chiavi
+
+  const { titolo, contenuto, immagine, tags } = req.body;
+
+  // controllo se esiste la pizza
+
+  const targetPostId = parseInt(req.params.id);
+  const currentPost = posts.find((post) => post.id === targetPostId);
+
+  // gestione messaggio di errore
+
+  if (!currentPost) {
+    res.status(404).json({ message: "post not found", error: "404 not found" });
+    return;
+  }
+
+  // controllo correttezza form
+
+  const wrongElements = [];
+  if (!titolo || typeof titolo !== "string" || titolo.length < 1) {
+    wrongElements.push("controlla i dati immessi su titolo");
+  }
+  if (!contenuto || typeof contenuto !== "string" || contenuto.length < 1) {
+    wrongElements.push("controlla i dati immessi su contenuto");
+  }
+  if (typeof immagine !== "string") {
+    wrongElements.push("controlla i dati immessi su immagine");
+  }
+  if (!Array.isArray(tags)) {
+    wrongElements.push("controlla i dati immessi nei tags");
+  }
+
+  if (wrongElements.length > 0) {
+    res.status(400).json({
+      error: "400 bad request",
+      message: "errore nei dati immessi",
+      wrongElements,
+    });
+    return;
+  }
+  // logica di eliminazione
+  const newPost = { id: targetPostId, titolo, contenuto, immagine, tags };
+  const postIndex = posts.indexOf(currentPost);
+  posts.splice(postIndex, 1, newPost);
+
+  res.status(200).json(newPost);
 };
 
 const modify = (req, res) => {
+  const { titolo, contenuto, immagine, tags } = req.body;
   res.json("modifica parzialmente un nuovo elemento");
 };
 
