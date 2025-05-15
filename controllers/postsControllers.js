@@ -27,8 +27,12 @@ const index = (req, res) => {
 };
 
 const show = (req, res) => {
+  // trovo il post
   const postId = parseInt(req.params.id);
   const post = posts.find((post) => post.id === postId);
+
+  // gestione post non trovato
+
   if (!post) {
     res.json({
       status: 404,
@@ -36,6 +40,8 @@ const show = (req, res) => {
       error: "404 not found",
     });
   }
+
+  // risposta
   return res.json(post);
 };
 
@@ -54,7 +60,7 @@ const store = (req, res) => {
   }
   const newPostId = lastId + 1;
 
-  // controllo correttezza form
+  // controllo correttezza dati
 
   const wrongElements = [];
   if (!titolo || typeof titolo !== "string" || titolo.length < 1) {
@@ -102,7 +108,7 @@ const update = (req, res) => {
     return;
   }
 
-  // controllo correttezza form
+  // controllo correttezza dati
 
   const wrongElements = [];
   if (!titolo || typeof titolo !== "string" || titolo.length < 1) {
@@ -127,7 +133,7 @@ const update = (req, res) => {
     return;
   }
 
-  // logica di eliminazione
+  // logica di sostituzione
 
   const newPost = { id: targetPostId, titolo, contenuto, immagine, tags };
   const postIndex = posts.indexOf(currentPost);
@@ -137,8 +143,69 @@ const update = (req, res) => {
 };
 
 const modify = (req, res) => {
+  // acquisizione chiavi
+
   const { titolo, contenuto, immagine, tags } = req.body;
-  res.json("modifica parzialmente un nuovo elemento");
+
+  // trovo il post
+
+  const targetPostId = parseInt(req.params.id);
+  const currentPost = posts.find((post) => post.id === targetPostId);
+
+  // gestione messaggio di errore
+
+  if (!currentPost) {
+    res.status(404).json({ message: "post not found", error: "404 not found" });
+    return;
+  }
+
+  // controllo correttezza dati
+
+  const wrongElements = [];
+  if (typeof titolo !== "string" || titolo.length !== null) {
+    wrongElements.push("controlla i dati immessi su titolo");
+  }
+  if (typeof contenuto !== "string" || contenuto.length !== null) {
+    wrongElements.push("controlla i dati immessi su contenuto");
+  }
+  if (typeof immagine !== "string" || immagine.length !== null) {
+    wrongElements.push("controlla i dati immessi su immagine");
+  }
+  if (!Array.isArray(tags) || tags.length !== 0) {
+    wrongElements.push("controlla i dati immessi nei tags");
+  }
+
+  if (wrongElements.length > 0) {
+    res.status(400).json({
+      error: "400 bad request",
+      message: "errore nei dati immessi",
+      wrongElements,
+    });
+    return;
+  }
+
+  // creo nuovo post e post con dati originali per comparazione
+
+  const originalPost = currentPost;
+
+  let newPost = [
+    {
+      id: targetPostId,
+      titolo: titolo ? titolo : originalPost.titolo,
+      contenuto: contenuto ? contenuto : originalPost.contenuto,
+      immagine: immagine ? immagine : originalPost.immagine,
+      tags: tags ? tags : originalPost.tags,
+    },
+  ];
+
+  // logica di sostituzione
+
+  const postIndex = posts.indexOf(currentPost);
+  posts.splice(postIndex, 1, newPost);
+
+  res.status(200).json(newPost);
+
+  res.json(newPost);
 };
 
 const destroy = (req, res) => {
