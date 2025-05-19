@@ -195,11 +195,11 @@ const modify = (req, res) => {
   // logica di sostituzione
 
   const postIndex = posts.indexOf(currentPost);
+  console.log(postIndex);
+
   posts.splice(postIndex, 1, newPost);
 
   res.status(200).json(newPost);
-
-  res.json(Posts);
 };
 
 const destroy = (req, res) => {
